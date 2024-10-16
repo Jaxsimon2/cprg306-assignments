@@ -40,6 +40,7 @@ export default function NewItem(){
                 {/* <label htmlFor="name"></label> */}
                 <div>
                     <input
+                        required
                         placeholder="Item Name"
                         id="name" 
                         type="text" 
