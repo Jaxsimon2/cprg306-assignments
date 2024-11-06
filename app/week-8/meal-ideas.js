@@ -1,28 +1,56 @@
-"use client"
+"use client";
 
 import { useState, useEffect } from "react";
 
-const fetchMealIdeas = async (ingredient) => {
-    const response = await fetch(`www.themealdb.com/api/json/v1/1/filter.php?i=${ingredient}`);
-    const data = await response.json();
-    return Object.keys(data.message);
+async function fetchMealIdeas(ingredient) {
+  const response = await fetch(
+    `https://www.themealdb.com/api/json/v1/1/filter.php?i=${ingredient}`
+  );
+  const data = await response.json();
+  console.log(data.meals);
+  return data.meals; 
 }
 
-export default function MealIdeas({ingredient}) {
+async function fetchInstructions(idMeal) {
+  const response = await fetch(
+    `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${idMeal}`
+  );
+  const data = await response.json();
+  console.log(data.meals);
+  return data.meals[0]?.strInstructions; 
+}
 
-    const [meals, setMeals] = useState([]);
+export default function MealIdeas({ ingredient }) {
+  const [meals, setMeals] = useState([]);
+  const [expandedMealId, setExpandedMealId] = useState(null);
+  const [instructions, setInstructions] = useState(""); 
 
-    const LoadMealIdeas = async () => {
-        const meals = await fetchMealIdeas(ingredient);
-        setMeals(meals);
+  async function loadMealIdeas() {
+    if (ingredient) {
+      const data = await fetchMealIdeas(ingredient);
+      setMeals(data);
+    } else {
+      setMeals([]);
     }
+  }
 
-    useEffect(() => {
-        LoadMealIdeas();
-    }, []);
+  useEffect(() => {
+    loadMealIdeas();
+  }, [ingredient]);
 
-    return(
-        <div className="p-4">
+  const handleMealClick = async (idMeal) => {
+    setExpandedMealId((prevId) => (prevId === idMeal ? null : idMeal));   
+    
+    if (expandedMealId !== idMeal) {
+      const instructions = await fetchInstructions(idMeal);
+      setInstructions(instructions);
+    } else {
+      setInstructions(""); 
+    }
+  };
+
+  return (
+    <div className="p-4">
       <h2 className="text-2xl font-bold text-yellow-100">Meal Ideas</h2>
       
       <ul>
@@ -49,5 +77,5 @@ export default function MealIdeas({ingredient}) {
         )}
       </ul>
     </div>
-    );
+  );
 }
