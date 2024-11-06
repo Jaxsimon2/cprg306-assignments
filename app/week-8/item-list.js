@@ -34,7 +34,8 @@ export default function ItemList({items, onItemSelect}){
                 <Item onClick={onItemSelect} key={item.id}
                 name={item.name}
                 quantity={item.quantity}
-                category={item.category}/>
+                category={item.category}
+                onSelect={() => onItemSelect(item)}/>
             ))}
         </ul>
     </main>

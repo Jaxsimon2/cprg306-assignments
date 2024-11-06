@@ -1,5 +1,5 @@
 "use client"
-import { loadBindings } from "next/dist/build/swc";
+
 import { useState, useEffect } from "react";
 
 const fetchMealIdeas = async (ingredient) => {
@@ -22,13 +22,32 @@ export default function MealIdeas({ingredient}) {
     }, []);
 
     return(
-        <div>
-            <h2>Meal Ideas</h2>
-            <p>{meals.map((meal) => (
-          <ul key={meal.idMeal} id={meal.idMeal} name={strMeal} url={strMealThumb}>
-            {meal.strMeal}
-          </ul>
-        ))}</p>
-        </div>
+        <div className="p-4">
+      <h2 className="text-2xl font-bold text-yellow-100">Meal Ideas</h2>
+      
+      <ul>
+        {meals && meals.length > 0 ? (
+          meals.map((meal) => (
+            <li 
+              key={meal.idMeal} 
+              onClick={() => handleMealClick(meal.idMeal)}
+              className={expandedMealId === meal.idMeal ? 'py-4 font-bold bg-slate-900 w-96' : ''}
+            >
+              <p>{meal.strMeal}</p>
+              {expandedMealId === meal.idMeal && meal.strMealThumb && (              
+                <img className="object-cover w-100" src={meal.strMealThumb} alt={meal.strMeal} />
+              )}
+              {expandedMealId === meal.idMeal && instructions && (
+                <div className="p-4 text-xs">
+                  <p>{instructions}</p>
+                </div>
+              )}
+            </li>
+          ))
+        ) : (
+          <li>No meal ideas available for this ingredient.</li>
+        )}
+      </ul>
+    </div>
     );
 }
